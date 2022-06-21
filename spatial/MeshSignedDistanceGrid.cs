@@ -103,6 +103,7 @@ namespace g3
 
         // computed results
         Vector3f grid_origin;
+        Vector3f computed_max;
         DenseGrid3f grid;
         DenseGrid3i closest_tri_grid;
         DenseGrid3i intersections_grid;
@@ -115,7 +116,7 @@ namespace g3
         }
 
 
-        public void Compute()
+        public Vector3i Compute()
         {
             // figure out origin & dimensions
             AxisAlignedBox3d bounds = Mesh.CachedBounds;
@@ -125,6 +126,7 @@ namespace g3
                 fBufferWidth = (float)Math.Max(fBufferWidth, 2 * NarrowBandMaxDistance);
             grid_origin = (Vector3f)bounds.Min - fBufferWidth * Vector3f.One - (Vector3f)ExpandBounds;
             Vector3f max = (Vector3f)bounds.Max + fBufferWidth * Vector3f.One + (Vector3f)ExpandBounds;
+            computed_max = max;
             int ni = (int)((max.x - grid_origin.x) / CellSize) + 1;
             int nj = (int)((max.y - grid_origin.y) / CellSize) + 1;
             int nk = (int)((max.z - grid_origin.z) / CellSize) + 1;
@@ -146,6 +148,7 @@ namespace g3
                     make_level_set3(grid_origin, CellSize, ni, nj, nk, grid, ExactBandWidth);
                 }
             }
+            return new Vector3i(ni, nj, nk);
         }
 
 
@@ -166,6 +169,10 @@ namespace g3
         /// </summary>
         public Vector3f GridOrigin {
             get { return grid_origin; }
+        }
+        public Vector3f ComputedMax
+        {
+            get { return computed_max; }
         }
 
 
